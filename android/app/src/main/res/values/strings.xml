@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">宅建合格！数字暗記ノック</string>
+    <string name="title_activity_main">宅建合格！数字暗記ノック</string>
+    <string name="package_name">com.takken.numbers</string>
+    <string name="custom_url_scheme">com.takken.numbers</string>
+</resources>
