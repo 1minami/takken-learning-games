@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { AdMob } from '@capacitor-community/admob';
 import './App.css';
 import questionsData from './questions.json';
 
@@ -39,6 +40,47 @@ export default function App() {
   const [showSettingsModal, setShowSettingsModal] = useState<boolean>(false);
 
   const timerRef = useRef<any>(null);
+
+  // ==========================================================================
+  // AdMob (Advertising) Configuration & Handlers
+  // ==========================================================================
+  const prepareInterstitial = async () => {
+    try {
+      await AdMob.prepareInterstitial({
+        adId: 'ca-app-pub-3940256099942544/1033173712', // Google Play Test Interstitial Ad ID
+        isTesting: true
+      });
+    } catch (error) {
+      console.warn('AdMob prepare failed:', error);
+    }
+  };
+
+  const showAd = async () => {
+    try {
+      await AdMob.showInterstitial();
+      prepareInterstitial(); // Pre-load next ad
+    } catch (error) {
+      console.warn('AdMob show failed:', error);
+    }
+  };
+
+  // Initialize AdMob on start
+  useEffect(() => {
+    AdMob.initialize({
+      initializeForTesting: true
+    }).then(() => {
+      prepareInterstitial();
+    }).catch(err => {
+      console.error('AdMob initialization failed:', err);
+    });
+  }, []);
+
+  // Display interstitial ad upon game over or complete
+  useEffect(() => {
+    if (appState === 'gameover' || appState === 'cleared') {
+      showAd();
+    }
+  }, [appState]);
   
   // 現在の問題を取得 (安全対策としてフォールバックを定義)
   const currentQuestion = questionsList[currentQIndex] || {
